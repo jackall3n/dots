@@ -57,6 +57,16 @@ export class Star {
       this.settings.y = -10;
     }
 
+    if (this.settings.x < 0 - 10) {
+      this.create();
+      this.settings.x = this.bounds.width + 10;
+    }
+
+    if (this.settings.y < 0 - 10) {
+      this.create();
+      this.settings.y = this.bounds.height + 10;
+    }
+
     if (this.settings.y < world.glow.y && this.settings.y_velocity < 0) {
       this.settings.y_velocity = this.settings.y_velocity * -1;
     }
@@ -70,7 +80,7 @@ export class Star {
       STAR.alpha.min
     );
 
-    this.settings.color.b =
+    this.settings.color.r =
       255 - Math.max(255 - Math.min(255 * (d / 300), 255), 0);
   };
 
