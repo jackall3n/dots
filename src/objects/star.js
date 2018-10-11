@@ -27,16 +27,25 @@ export class Star {
   };
 
   update = (timestamp, world) => {
+    let d = distance(
+      this.settings.x,
+      this.settings.y,
+      world.glow.x,
+      world.glow.y
+    );
+
+    var dx = world.glow.x - this.settings.x;
+    var dy = world.glow.y - this.settings.y;
+
+    var angle = Math.atan2(dx, dy);
+
+    var velX = Math.cos(angle) * 1;
+    var velY = Math.sin(angle) * 1;
+    this.settings.x_velocity = velX;
+    this.settings.y_velocity = velY;
+
     this.settings.y += this.settings.y_velocity;
     this.settings.x += this.settings.x_velocity;
-    //this.settings.color.a += this.settings.a_velocity;
-
-    if (
-      this.settings.color.a >= STAR.alpha.max ||
-      this.settings.color.a <= STAR.alpha.min
-    ) {
-      this.settings.a_velocity = this.settings.a_velocity * -1;
-    }
 
     if (this.settings.x > this.bounds.width + 10) {
       this.create();
@@ -55,13 +64,6 @@ export class Star {
     if (this.settings.x < world.glow.x && this.settings.y_velocity < 0) {
       this.settings.x_velocity = this.settings.x_velocity * -1;
     }
-
-    let d = distance(
-      this.settings.x,
-      this.settings.y,
-      world.glow.x,
-      world.glow.y
-    );
 
     this.settings.color.a = Math.max(
       1 - Math.min(1 * (d / 300), 1),

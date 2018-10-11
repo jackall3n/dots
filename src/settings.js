@@ -6,7 +6,7 @@ export const STAR = {
   max: 500,
   lifetime: 1000,
   velocity: {
-    min: 0.001,
+    min: 0.1,
     max: 1
   },
   alpha: {
