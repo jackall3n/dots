@@ -5,6 +5,8 @@ import {Star} from "./objects/star";
 import {Player} from "./objects/player";
 import {Scoreboard} from "./objects/scoreboard";
 import {Background} from "./objects/background";
+import {Enemy} from "./objects/enemy";
+import {WeaponsPanel} from "./objects/weapons-panel";
 
 export class Game {
     static timestamp;
@@ -23,9 +25,11 @@ export class Game {
 
     objects = {
         scoreboard: {},
+        weapons_panel: {},
         background: {},
         player: {},
-        stars: []
+        stars: [],
+        enemies: []
     };
 
     constructor(canvas) {
@@ -45,6 +49,13 @@ export class Game {
         this.objects.stars = _.times(STAR.max, () => new Star(this));
         this.objects.player = new Player(this);
         this.objects.scoreboard = new Scoreboard(this);
+        this.objects.weapons_panel = new WeaponsPanel(this);
+        this.objects.enemies = [
+            new Enemy(this, {x: GAME.padding.left, y: GAME.padding.top}),
+            new Enemy(this, {x: this.bounds.width - GAME.padding.right, y: GAME.padding.top}),
+            new Enemy(this, {x: this.bounds.width - GAME.padding.right, y: this.bounds.height - GAME.padding.bottom}),
+            new Enemy(this, {x: GAME.padding.left, y: this.bounds.height - GAME.padding.bottom}),
+        ];
 
         this.animation_service.request();
     };
@@ -69,12 +80,16 @@ export class Game {
         // Draw the objects;
         this.objects.background.draw();
         this.objects.stars.forEach(star => star.draw());
+        this.objects.enemies.forEach(enemy => enemy.draw());
         this.objects.player.draw();
+        this.objects.weapons_panel.draw();
         this.objects.scoreboard.draw();
     };
 
     update = () => {
+        this.objects.weapons_panel.update();
         this.objects.player.update();
+        this.objects.enemies.forEach(enemy => enemy.update());
         this.objects.stars.forEach(star => star.update());
     };
 }

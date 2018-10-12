@@ -20,3 +20,7 @@ export const distance = (x1, y1, x2, y2) => {
 export const collision = (x1, y1, width, height, x2, y2) => {
     return x2 > x1 && x2 < x1 + width && y2 > y1 && y2 < y1 + height;
 };
+
+export const pointAt = (x1, y1, x2, y2) => {
+    return Math.atan2(y2 - y1, x2 - x1);
+};

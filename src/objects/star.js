@@ -1,5 +1,5 @@
 import {random, rgba, distance, collision} from "../utils";
-import {STAR, PLAYER} from "../constants";
+import {STAR} from "../constants";
 
 export class Star {
     game;
@@ -54,7 +54,7 @@ export class Star {
 
         this.props.rotation = Math.atan2(player.props.y - this.props.y, player.props.x - this.props.x);
 
-        if (d < PLAYER.glow_radius) {
+        if (d < player.glow_radius) {
             this.props.y_velocity = Math.cos(this.props.rotation) * 2;
             this.props.x_velocity = Math.sin(this.props.rotation) * 2;
         }
@@ -89,12 +89,9 @@ export class Star {
             this.props.x_velocity = this.props.x_velocity * -1;
         }
 
-        this.props.color.a = Math.max(
-            1 - Math.min(d / PLAYER.glow_radius, 1),
-            STAR.alpha.min
-        );
-
-        this.props.color.b = 255 - Math.max(255 - Math.min(255 * (d / PLAYER.glow_radius), 255), 0);
+        this.props.color.r = 255 - Math.max(255 - Math.min(255 * (d / player.glow_radius), 255), 0);
+        this.props.color.b = 255 - Math.max(255 - Math.min(255 * (d / player.glow_radius), 255), 0);
+        this.props.color.a = Math.max(1 - Math.min(d / player.glow_radius, 1), STAR.alpha.min);
     };
 
     draw = () => {

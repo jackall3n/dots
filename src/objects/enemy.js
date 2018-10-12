@@ -1,4 +1,4 @@
-import {GAME} from "../constants";
+import {ENEMY, GAME} from "../constants";
 
 export class Enemy {
     props = {};
@@ -7,10 +7,21 @@ export class Enemy {
         this.game = game;
         this.props.x = origin.x;
         this.props.y = origin.y;
+
+        this.create();
     }
 
+    create = () => {
+        this.props.radius = ENEMY.radius;
+    };
+
+    update = () => {
+
+    };
+
     draw = () => {
-        this.game.canvas_service.fillStyle(GAME.background_color);
-        this.game.canvas_service.fillRect(0, 0, this.game.bounds.width, this.game.bounds.height);
+        const {x, y, radius} = this.props;
+
+        this.game.canvas_service.circle(x, y, radius, ENEMY.color);
     }
 }

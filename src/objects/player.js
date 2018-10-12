@@ -2,6 +2,7 @@ import {GAME, PLAYER} from "../constants";
 
 export class Player {
     props = {};
+    state = {};
 
     constructor(game) {
         this.game = game;
@@ -16,6 +17,12 @@ export class Player {
         this.props.y = this.game.bounds.height / 2 - height;
         this.props.width = width;
         this.props.height = height;
+        this.glow_radius = PLAYER.glow_radius;
+
+        this.state = {
+            charge: 0,
+            firing: false
+        }
     };
 
     update = () => {
@@ -37,21 +44,27 @@ export class Player {
             this.props.y += velocity;
         }
 
-        if (this.props.y > this.game.bounds.height + GAME.margin) {
-            this.props.y = -GAME.margin;
+        if (this.props.y > this.game.bounds.height + GAME.bounds) {
+            this.props.y = -GAME.bounds;
         }
 
-        if (this.props.x > this.game.bounds.width + GAME.margin) {
-            this.props.x = -GAME.margin;
+        if (this.props.x > this.game.bounds.width + GAME.bounds) {
+            this.props.x = -GAME.bounds;
         }
 
-        if (this.props.x < -GAME.margin) {
-            console.log(this.props.x, -GAME.margin);
-            this.props.x = this.game.bounds.width + GAME.margin;
+        if (this.props.x < -GAME.bounds) {
+            console.log(this.props.x, -GAME.bounds);
+            this.props.x = this.game.bounds.width + GAME.bounds;
         }
 
-        if (this.props.y < -GAME.margin) {
-            this.props.y = this.game.bounds.height + GAME.margin;
+        if (this.props.y < -GAME.bounds) {
+            this.props.y = this.game.bounds.height + GAME.bounds;
+        }
+
+        if (this.state.firing) {
+            const depletion_rate = 20;
+            this.glow_radius += depletion_rate * 2;
+            this.state.charge = Math.max(this.state.charge - depletion_rate, 0);
         }
     };
 
@@ -61,7 +74,7 @@ export class Player {
         this.game.canvas_service.fillRect(x, y, width, height, PLAYER.color);
         this.game.canvas_service.strokeRect(x, y, width, height, PLAYER.strokeColor);
         this.game.canvas_service.strokeRect(x + 2, y + 2, width - 4, height - 4, PLAYER.strokeColor2);
-        this.game.canvas_service.strokeRect(x + 4, y + 4, width - 8, height - 8, PLAYER.strokeColor2);
+        this.game.canvas_service.strokeRect(x + 4, y + 4, width - 8, height - 8, PLAYER.strokeColor3);
 
     }
 }
