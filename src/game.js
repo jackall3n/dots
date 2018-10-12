@@ -2,18 +2,30 @@ import {AnimationService, CanvasService, KeyService, MouseService} from "./servi
 import _ from "lodash";
 import {GAME, STAR} from "./constants";
 import {Star} from "./objects/star";
+import {Player} from "./objects/player";
+import {Scoreboard} from "./objects/scoreboard";
+import {Background} from "./objects/background";
 
 export class Game {
     static timestamp;
 
+    stats = {
+        score: 0
+    };
+
     user = {
         keys: {},
-        mouse: {}
+        mouse: {
+            x: 150,
+            y: 150
+        }
     };
 
     objects = {
-        stars: [],
-        players: []
+        scoreboard: {},
+        background: {},
+        player: {},
+        stars: []
     };
 
     constructor(canvas) {
@@ -27,41 +39,42 @@ export class Game {
     }
 
     init = () => {
-        this.objects.stars = _.times(STAR.max, () => new Star(this.bounds));
+        this.canvas_service.font('20px Georgia');
+
+        this.objects.background = new Background(this);
+        this.objects.stars = _.times(STAR.max, () => new Star(this));
+        this.objects.player = new Player(this);
+        this.objects.scoreboard = new Scoreboard(this);
+
         this.animation_service.request();
     };
 
     loop = timestamp => {
         Game.timestamp = timestamp;
 
-        // Update objects
-        this.update();
-
         // Draw objects
         this.draw();
 
+        // Update objects
+        this.update();
+
         // Request new animation from for next iteration
         this.animation_service.request();
-    };
-
-    update = () => {
-        this.objects.stars.forEach(star => star.update(this))
     };
 
     draw = () => {
         // Clear the existing content
         this.canvas_service.clear(0, 0, this.bounds.width, this.bounds.height);
 
-        // Draw the background
-        this.drawBackground();
-
-        // Draw the stars;
-        this.objects.stars.forEach(star => star.draw(this));
+        // Draw the objects;
+        this.objects.background.draw();
+        this.objects.stars.forEach(star => star.draw());
+        this.objects.player.draw();
+        this.objects.scoreboard.draw();
     };
 
-    drawBackground = () => {
-        this.canvas_service.fill(GAME.background_color);
-        this.canvas_service.rect(0, 0, this.bounds.width, this.bounds.height);
-        this.canvas_service.fill();
-    }
+    update = () => {
+        this.objects.player.update();
+        this.objects.stars.forEach(star => star.update());
+    };
 }

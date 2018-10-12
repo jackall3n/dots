@@ -12,6 +12,7 @@ class GameController extends React.Component {
     componentDidMount() {
         this.game = new Game(this.canvas);
         this.game.init();
+        this.canvas.focus();
     }
 
     render() {
