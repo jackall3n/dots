@@ -1,6 +1,6 @@
 
 export class Player {
-    constructor(world) {
+    constructor(game) {
 
     }
 }

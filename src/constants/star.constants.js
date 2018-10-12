@@ -1,7 +1,3 @@
-export const CANVAS = {
-    background_color: "#222"
-};
-
 export const STAR = {
     max: 500,
     lifetime: 1000,

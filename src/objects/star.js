@@ -1,8 +1,8 @@
-import { random, rgba, distance } from "../utils";
-import { STAR } from "../settings";
+import {random, rgba, distance} from "../utils";
+import {STAR} from "../constants";
 
 export class Star {
-    settings = {};
+    props = {};
     bounds;
 
     constructor(bounds) {
@@ -12,13 +12,13 @@ export class Star {
     }
 
     create = () => {
-        this.settings.radius = random(1, 2);
-        this.settings.x = random(0, this.bounds.width);
-        this.settings.y = random(0, this.bounds.height);
-        this.settings.y_velocity = random(STAR.velocity.min, STAR.velocity.max);
-        this.settings.x_velocity = random(STAR.velocity.min, STAR.velocity.max);
-        this.settings.a_velocity = STAR.alpha.velocity;
-        this.settings.color = {
+        this.props.radius = random(1, 2);
+        this.props.x = random(0, this.bounds.width);
+        this.props.y = random(0, this.bounds.height);
+        this.props.y_velocity = random(STAR.velocity.min, STAR.velocity.max);
+        this.props.x_velocity = random(STAR.velocity.min, STAR.velocity.max);
+        this.props.a_velocity = STAR.alpha.velocity;
+        this.props.color = {
             r: 255,
             g: 255,
             b: 255,
@@ -26,58 +26,55 @@ export class Star {
         };
     };
 
-    update = (timestamp, world) => {
-        this.settings.y += this.settings.y_velocity;
-        this.settings.x += this.settings.x_velocity;
-        this.settings.color.a += this.settings.a_velocity;
+    update = game => {
+        this.props.y += this.props.y_velocity;
+        this.props.x += this.props.x_velocity;
+        this.props.color.a += this.props.a_velocity;
 
         if (
-            this.settings.color.a >= STAR.alpha.max ||
-            this.settings.color.a <= STAR.alpha.min
+            this.props.color.a >= STAR.alpha.max ||
+            this.props.color.a <= STAR.alpha.min
         ) {
-            this.settings.a_velocity = this.settings.a_velocity * -1;
+            this.props.a_velocity = this.props.a_velocity * -1;
         }
 
-        if (this.settings.x > this.bounds.width + 10) {
+        if (this.props.x > this.bounds.width + 10) {
             this.create();
-            this.settings.x = -10;
+            this.props.x = -10;
         }
 
-        if (this.settings.y > this.bounds.height + 10) {
+        if (this.props.y > this.bounds.height + 10) {
             this.create();
-            this.settings.y = -10;
+            this.props.y = -10;
         }
 
-        if (this.settings.y < world.glow.y && this.settings.y_velocity < 0) {
-            this.settings.y_velocity = this.settings.y_velocity * -1;
+        if (this.props.y < game.user.mouse.y && this.props.y_velocity < 0) {
+            this.props.y_velocity = this.props.y_velocity * -1;
         }
 
-        if (this.settings.x < world.glow.x && this.settings.y_velocity < 0) {
-            this.settings.x_velocity = this.settings.x_velocity * -1;
+        if (this.props.x < game.user.mouse.x && this.props.y_velocity < 0) {
+            this.props.x_velocity = this.props.x_velocity * -1;
         }
 
         let d = distance(
-            this.settings.x,
-            this.settings.y,
-            world.glow.x,
-            world.glow.y
+            this.props.x,
+            this.props.y,
+            game.user.mouse.x,
+            game.user.mouse.y
         );
 
-        /*this.settings.color.a = Math.max(
-          1 - Math.min(1 * (d / 300), 1),
-          STAR.alpha.min
-        );*/
+        this.props.color.a = Math.max(
+            1 - Math.min(d / 300, 1),
+            STAR.alpha.min
+        );
 
-        this.settings.color.b =
+        this.props.color.b =
             255 - Math.max(255 - Math.min(255 * (d / 300), 255), 0);
     };
 
-    draw = context => {
-        const { x, y, radius, color } = this.settings;
+    draw = game => {
+        const {x, y, radius, color} = this.props;
 
-        context.fillStyle = rgba(color.r, color.g, color.b, color.a);
-        context.beginPath();
-        context.arc(x, y, radius, 0, Math.PI * 2, false);
-        context.fill();
+        game.canvas_service.circle(x, y, radius, rgba(color.r, color.g, color.b, color.a));
     };
 }

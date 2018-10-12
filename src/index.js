@@ -1,84 +1,23 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import _ from "lodash";
-import { STAR, CANVAS } from "./settings";
 
-import { Star } from "./objects/star";
+import {Game} from "./game";
 
 import "./styles.css";
 
 console.clear();
 
-if (window.animation) {
-    cancelAnimationFrame(window.animation);
-    console.log("frame cancelled");
-}
-
-class Game extends React.Component {
-    static properties = {
-        bounds: {},
-        keys: {}
-    };
-
-    state = {
-        stars: []
-    };
-
-    ctx;
-    bounds;
+class GameController extends React.Component {
 
     componentDidMount() {
-        window.addEventListener("resize", this.resize);
-        this.bounds = this.canvas.getBoundingClientRect();
-        this.ctx = this.canvas.getContext("2d");
-        this.canvas.onmousemove = this.hover;
-        this.world = {
-            glow: {
-                x: this.bounds.width / 2,
-                y: this.bounds.height / 2
-            }
-        };
-
-        let stars = _.times(STAR.max, () => new Star(this.bounds));
-
-        this.setState({ stars }, this.requestAnimationFrame);
+        this.game = new Game(this.canvas);
+        this.game.init();
     }
-
-    requestAnimationFrame = () => {
-        window.animation = requestAnimationFrame(this.update);
-    };
-
-    hover = e => {
-        this.world.glow.x = e.clientX;
-        this.world.glow.y = e.clientY;
-    };
-
-    resize = () => {
-        console.log("resize");
-    };
-
-    drawBackground = () => {
-        this.ctx.fillStyle = CANVAS.background_color;
-        this.ctx.rect(0, 0, this.bounds.width, this.bounds.height);
-        this.ctx.fill();
-    };
-
-    update = timestamp => {
-        this.draw();
-        this.state.stars.forEach(s => s.update(timestamp, this.world));
-
-        this.requestAnimationFrame();
-    };
-
-    draw = () => {
-        this.ctx.clearRect(0, 0, this.bounds.width, this.bounds.height);
-        this.drawBackground();
-        this.state.stars.forEach(s => s.draw(this.ctx));
-    };
 
     render() {
         return (
             <canvas
+                tabIndex={1}
                 width={window.innerWidth}
                 height={window.innerHeight}
                 ref={el => (this.canvas = el)}
@@ -87,4 +26,4 @@ class Game extends React.Component {
     }
 }
 
-ReactDOM.render(<Game />, document.getElementById("root"));
+ReactDOM.render(<GameController/>, document.getElementById("root"));
