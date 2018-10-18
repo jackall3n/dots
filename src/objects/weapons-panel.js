@@ -41,6 +41,8 @@ export class WeaponsPanel {
             b: 0
         };
 
+        this.game.canvas_service.fillRect(0, 0, this.game.bounds.width, this.game.bounds.height, rgba(0, 0, 0, 0.5 * percentage_fill));
+
         this.game.canvas_service.strokeStyle('#fff');
         this.game.canvas_service.strokeWidth(WEAPONS_PANEL.strokeWidth);
         this.game.canvas_service.strokeRect(this.props.x, this.props.y, this.props.width, this.props.height);
